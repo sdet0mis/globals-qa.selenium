@@ -1,0 +1,16 @@
+services:
+  test:
+    image: globals-qa.selenium
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./:/usr/workspace
+    command: 
+      - /bin/sh
+      - -c 
+      - |
+       pytest -n 4 --alluredir=allure-results
+       allure generate --single-file allure-results --clean
+       rm -rf allure-results
+    working_dir: /usr/workspace
