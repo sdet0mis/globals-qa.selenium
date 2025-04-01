@@ -5,6 +5,8 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.remote.webdriver import WebDriver
 
+from data.customers import new_customer
+
 
 @pytest.fixture(autouse=True)
 def driver(request: pytest.FixtureRequest) -> Generator[WebDriver, None, None]:
@@ -17,3 +19,8 @@ def driver(request: pytest.FixtureRequest) -> Generator[WebDriver, None, None]:
     request.cls.driver = driver
     yield driver
     driver.quit()
+
+
+@pytest.fixture
+def get_new_customer() -> dict[str, str]:
+    return new_customer()

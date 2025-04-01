@@ -1,7 +1,6 @@
 import allure
 import pytest
 
-from data.customers import customer_to_delete
 from tests.base_test import BaseTest
 
 
@@ -18,17 +17,16 @@ class TestDeleteCustomer(BaseTest):
     def test_delete_customer(self):
         self.manager_page.open_page()
         self.manager_page.click_customers_button()
-        customer = customer_to_delete(
-            self.customers_page.get_customers_first_names()
-        )
         self.customers_page.make_screenshot("Скриншот страницы клиентов")
-        self.customers_page.click_delete_button(
-            customer["customer_id"], customer["name"]
+        customer_name = (
+            self.customers_page.click_delete_button_for_customer_with_average_name_length()["name"]  # noqa
         )
-        assert customer["name"] not in (
-                self.customers_page.get_customers_first_names()
-        ), f"Клиент {customer['name']} не удален"
-        self.customers_page.fill_search_customer_field(customer["name"])
+        assert customer_name not in (
+            self.customers_page.get_customers_first_names()
+        ), f"Клиент {customer_name} не удален"
+        self.customers_page.fill_search_customer_field(
+            customer_name
+        )
         self.customers_page.make_screenshot(
             "Скриншот страницы клиентов после удаления клиента"
         )

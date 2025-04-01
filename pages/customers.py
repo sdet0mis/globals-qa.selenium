@@ -2,6 +2,7 @@ import allure
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 
+from data.customers import customer_to_delete
 from pages.manager import ManagerPage
 
 
@@ -41,3 +42,10 @@ class CustomersPage(ManagerPage):
             f"Нажать на кнопку 'Delete' в строке клиента с именем {name}"
         ):
             self.click(self.DELETE_BUTTON(customer_id))
+
+    def click_delete_button_for_customer_with_average_name_length(
+        self
+    ) -> dict[str, str]:
+        customer = customer_to_delete(self.get_customers_first_names())
+        self.click_delete_button(customer["customer_id"], customer["name"])
+        return customer
