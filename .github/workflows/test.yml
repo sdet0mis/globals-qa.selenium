@@ -1,0 +1,72 @@
+name: Test
+
+on:
+  workflow_dispatch
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+  
+jobs:
+  run-tests:
+    runs-on: ubuntu-latest
+    name: Run tests
+    steps:
+      - name: Copy source code
+        uses: actions/checkout@v4
+      - name: Set up Python env
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Set up Chrome
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: "134"
+          install-chromedriver: true
+      - name: Run tests
+        run: pytest -n 4 --alluredir=allure-results
+        continue-on-error: true
+      - name: Store allure results
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results
+          path:
+            allure-results
+          retention-days: 1
+
+  generate-report:
+    runs-on: ubuntu-latest
+    needs: run-tests
+    name: Generate report
+    steps:
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'microsoft'
+          java-version: '17'
+      - run: sudo wget https://github.com/allure-framework/allure2/releases/download/2.23.1/allure-2.23.1.tgz && sudo tar -zxvf allure-2.23.1.tgz -C /opt/ && sudo ln -s /opt/allure-2.23.1/bin/allure /usr/bin/allure
+      - name: Download all workflow run artifacts
+        uses: actions/download-artifact@v4
+      - run: allure generate -c allure-results -o _site
+      - name: Store generated report
+        uses: actions/upload-artifact@v4
+        with:
+          name: _site
+          path:
+            _site
+          retention-days: 1
+
+  deploy-report:
+    runs-on: ubuntu-latest
+    needs: generate-report
+    name: Deploy report
+    steps:
+      - name: Download all workflow run artifacts
+        uses: actions/download-artifact@v4
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4.0.5
