@@ -4,13 +4,19 @@ import pytest
 
 from config.models import EntityIdModel
 from data.entity import EntityData
+from services.entity import EntityService
+
+
+@pytest.fixture()
+def entity_service() -> EntityService:
+    entity_service = EntityService()
+    return entity_service
 
 
 @pytest.fixture()
 def entity(
-    request: pytest.FixtureRequest
+    entity_service: EntityService
 ) -> Generator[EntityIdModel, Any, None]:
-    entity_service = request.getfixturevalue("setup")
     entity = entity_service.create_entity(*(EntityData().entity()))
     entity_service.check_status_code()
     yield entity
