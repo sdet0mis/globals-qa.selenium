@@ -27,6 +27,6 @@ class EntitiesModel(BaseModel):
     entity: list[EntityModel]
 
 
-class EntityDateModel(RootModel):
+class EntityDateModel(BaseModel):
 
-    root: str
+    Date: str
