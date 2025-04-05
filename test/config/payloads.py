@@ -1,22 +1,17 @@
-from typing import Any
+from dataclasses import dataclass
 
 
-class EntityPayloads:
+@dataclass
+class Addition:
 
-    def entity(
-        self,
-        additional_info: str,
-        additional_number: int,
-        important_numbers: list[int],
-        title: str,
-        verified: bool
-    ) -> dict[str, Any]:
-        return {
-            "addition": {
-                "additional_info": additional_info,
-                "additional_number": additional_number
-            },
-            "important_numbers": important_numbers,
-            "title": title,
-            "verified": verified
-        }
+    additional_info: str
+    additional_number: int
+
+
+@dataclass
+class Entity:
+
+    addition: Addition
+    important_numbers: list[int]
+    title: str
+    verified: bool

@@ -17,6 +17,6 @@ def entity_service() -> EntityService:
 def entity(
     entity_service: EntityService
 ) -> Generator[EntityIdModel, Any, None]:
-    entity = entity_service.create_entity(*(EntityData().entity()))
+    entity = entity_service.create_entity(*EntityData.entity())
     yield entity
     entity_service.delete_entity(entity["model"].root)

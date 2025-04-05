@@ -1,11 +1,12 @@
 import json
+from dataclasses import asdict
 from typing import Any
 
 import allure
 
 from services.http_client import HTTPClient
 from config.endpoints import EntityEndpoints
-from config.payloads import EntityPayloads
+from config.payloads import Entity, Addition
 from helpers.checkers import Checkers
 from config.models import EntityIdModel
 from config.models import EntityDateModel
@@ -18,7 +19,6 @@ class EntityService(HTTPClient):
     def __init__(self):
         super().__init__()
         self.endpoints = EntityEndpoints()
-        self.payloads = EntityPayloads()
 
     @allure.step("Создать сущность с заголовком {title}")
     def create_entity(
@@ -30,16 +30,18 @@ class EntityService(HTTPClient):
         verified: bool,
         expected_code: int = 200
     ) -> dict[str, dict[str, Any] | EntityIdModel]:
-        payloads = self.payloads.entity(
-            additional_info,
-            additional_number,
+        payloads = Entity(
+            Addition(
+                additional_info,
+                additional_number
+            ),
             important_numbers,
             title,
             verified
         )
         self.response = self.post(
             url=self.endpoints.CREATE_ENTITY,
-            json=payloads
+            json=asdict(payloads)
         )
         Checkers.check_status_code(expected_code, self.response.status_code)
         if expected_code == 200:
@@ -82,16 +84,18 @@ class EntityService(HTTPClient):
         verified: bool,
         code: int = 204
     ) -> dict[str, dict[str, Any] | EntityDateModel]:
-        payloads = self.payloads.entity(
-            additional_info,
-            additional_number,
+        payloads = Entity(
+            Addition(
+                additional_info,
+                additional_number
+            ),
             important_numbers,
             title,
             verified
         )
         self.response = self.patch(
             url=self.endpoints.UPDATE_ENTITY(id),
-            json=payloads
+            json=asdict(payloads)
         )
         Checkers.check_status_code(code, self.response.status_code)
         if code == 204:

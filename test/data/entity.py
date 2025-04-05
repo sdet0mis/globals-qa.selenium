@@ -1,11 +1,10 @@
-from typing import Any
-
 from faker import Faker
 
 
 class EntityData:
 
-    def entity(self) -> tuple[Any]:
+    @staticmethod
+    def entity() -> tuple[str, int, list[int], str, bool]:
         return (
             Faker().pystr(),
             Faker().pyint(),

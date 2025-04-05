@@ -16,12 +16,12 @@ class TestEntity:
 
     @allure.title("Создание сущности")
     def test_create_entity(self, entity_service: EntityService) -> None:
-        entity = entity_service.create_entity(*(EntityData().entity()))
+        entity = entity_service.create_entity(*EntityData.entity())
         entity_service.get_entity(entity["model"].root)
 
     @allure.title("Удаление сущности")
     def test_delete_entity(self, entity_service: EntityService) -> None:
-        entity = entity_service.create_entity(*(EntityData().entity()))
+        entity = entity_service.create_entity(*EntityData.entity())
         entity_service.delete_entity(entity["model"].root)
         entity_service.get_entity(entity["model"].root, expected_code=404)
 
@@ -39,8 +39,8 @@ class TestEntity:
         entity_service: EntityService,
         entity: dict[str, dict[str, Any] | EntityIdModel]
     ) -> None:
-        entity2 = entity_service.create_entity(*(EntityData().entity()))
-        entity3 = entity_service.create_entity(*(EntityData().entity()))
+        entity2 = entity_service.create_entity(*EntityData.entity())
+        entity3 = entity_service.create_entity(*EntityData.entity())
         response = entity_service.get_entities()
         response_entities = response.entity
         response_entities_ids = [ent.id for ent in response_entities]
@@ -57,6 +57,6 @@ class TestEntity:
         entity: dict[str, dict[str, Any] | EntityIdModel]
     ) -> None:
         updated_entity = entity_service.update_entity(
-            entity["model"].root, *(EntityData().entity())
+            entity["model"].root, *EntityData.entity()
         )
         entity_service.get_entity(entity["model"].root)
